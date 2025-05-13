@@ -1,0 +1,6 @@
+Model/Model_Ours/*.pth
+!Model/Model_Ours/model_299epoch.pth
+
+# Python cache files
+*.pyc
+__pycache__/
