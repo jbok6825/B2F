@@ -9,11 +9,12 @@ latent_dim은 한 frame의 feature
 output_dim은 한 frame의 feature
 '''
 class ContentEncoder(nn.Module):
-    def __init__(self, latent_dim, output_dim, positional_encoding = True, use_vqvae=False, codebook_size=1024, code_dim=512):
+    def __init__(self, latent_dim, output_dim, positional_encoding = True, use_vqvae=False):
         super(ContentEncoder, self).__init__()
 
         self.positional_encoding = positional_encoding
         if self.positional_encoding == True:
+            
             self.pos_encoder = PositionalEncoding(latent_dim)
         seqTransEncoderLayer = nn.TransformerEncoderLayer(
             d_model=latent_dim,
@@ -24,18 +25,9 @@ class ContentEncoder(nn.Module):
         )
         self.seqEncoder = nn.TransformerEncoder(seqTransEncoderLayer, num_layers=8)
         
-        self.use_vqvae = use_vqvae
 
-        if self.use_vqvae:
-            self.codebook_size = codebook_size
-            self.code_dim = code_dim
-            self.embedding = nn.Embedding(self.codebook_size, self.code_dim)
-            nn.init.uniform_(self.embedding.weight, -1, 1)
-            self.commitment_loss_weight = 0.25
-            self.latent_projection = nn.Linear(latent_dim, code_dim)
-            self.output_projection = nn.Linear(code_dim, output_dim)
-        else:
-            self.output_projection = nn.Linear(latent_dim, output_dim)
+
+        self.output_projection = nn.Linear(latent_dim, output_dim)
 
     def forward(self, input,):
         input = input.transpose(0, 1)
@@ -44,21 +36,11 @@ class ContentEncoder(nn.Module):
         output = self.seqEncoder(input)
         output = output.transpose(0, 1)
 
-        if self.use_vqvae:
-            # VQ-VAE Quantization (without loss)
-            projected = self.latent_projection(output)  # [B, T, code_dim]
-            quantized = self.quantize(projected)
 
-            # Final output
-            output = self.output_projection(quantized)
-            output = F.normalize(output, p=2, dim=-1)
-
-            return output, quantized, projected
-        else:
-            # 기본 구조
-            output = self.output_projection(output)
-            output = F.normalize(output, p=2, dim=-1)
-            return output
+        # 기본 구조
+        output = self.output_projection(output)
+        output = F.normalize(output, p=2, dim=-1)
+        return output
 
     def quantize(self, projected):
         flattened = projected.view(-1, self.code_dim)

@@ -1,6 +1,45 @@
+# ===============================
+# Model weights
+# ===============================
 Model/Model_Ours/*.pth
 !Model/Model_Ours/model_299epoch.pth
 
-# Python cache files
-*.pyc
+# ===============================
+# Python cache
+# ===============================
 __pycache__/
+*.pyc
+*.pyo
+
+# ===============================
+# Training / Generated artifacts
+# ===============================
+dataset_*/
+runs/
+outputs/
+Models/
+
+*.pt
+*.npz
+*.npy
+*.pkl
+*.bvh
+
+# ===============================
+# Past / backup code
+# ===============================
+past_code/
+
+# ===============================
+# Virtual environments
+# ===============================
+.venv/
+venv/
+env/
+
+# ===============================
+# IDE / OS
+# ===============================
+.vscode/
+.idea/
+.DS_Store

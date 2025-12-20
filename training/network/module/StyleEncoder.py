@@ -6,7 +6,7 @@ from torch.nn import functional as F
 import gc
 from training.network.configs import *
 import torch.optim as optim
-from training.network.Util import *
+from training.network.utils import *
 
 
 class StyleEncoder(nn.Module):
@@ -29,18 +29,21 @@ class StyleEncoder(nn.Module):
         elif type == "attn":
             self.encoder = StyleEncoderAttn(input_size, hidden_size, encoder_output_size)
 
-    def forward(self, input, temperature: float = 0.8, hard: bool = False):
-        encoder_output = self.encoder(input)  # [B, D * K] if VQ-VAE
+    def forward(self, input = None, temperature: float =1e-6, hard: bool = False, logits = None):
+          # [B, D * K] if VQ-VAE
         if self.use_vae:
+            if logits == None:
+                encoder_output = self.encoder(input)
             # encoder output을 categorical distribution으로 reshape
-            logits = encoder_output.view(-1, self.vq_latent_dim, self.vq_num_categories)  # [B, D, K]
-
+                logits = encoder_output.view(-1, self.vq_latent_dim, self.vq_num_categories)  # [B, D, K]
             # Gumbel-softmax trick (VQ-VAE 스타일)
             style_embedding = F.gumbel_softmax(logits, tau=temperature, hard=hard, dim=-1)  # [B, D, K]
             style_embedding = style_embedding.view(style_embedding.size(0), -1)  # [B, D*K]
 
+
             return style_embedding, logits, None  # VQ-VAE에서는 logvar 대신 logits 리턴
         else:
+            encoder_output = self.encoder(input)
             # 기존 방식 유지
             if self.use_normalize:
                 encoder_output = F.normalize(encoder_output, p=2, dim=1)
@@ -64,73 +67,6 @@ class StyleEncoder(nn.Module):
         return kl_mean
 
 
-        
-    # def epoch_process(self, epoch, dataloader, writer):
-    #     # p의 확률로 실제 data를 사용하는거임
-    #     # print('Epoch: {} / {}'.format(epoch, NUM_EPOCH))
-    #     print("@@Epoch:", epoch)
-    #     avg_error_train = 0.
-    #     batch_num = len(dataloader)
-    #     batch_size = dataloader.batch_size
-
-    #     for training_data in dataloader:
-
-    #         gc.collect()
-    #         torch.cuda.empty_cache()
-
-    #         facial_motion_style = training_data['facial_style_feature']
-    #         style_code = training_data['style_code']
-
-    #         faceStyleEmbedding = self.forward(facial_motion_style)[0]
-
-            
-    #         loss = supervisedContrastive_loss(faceStyleEmbedding, style_code)
-
-
-    #         writer.add_scalar("Total Loss/train", loss, epoch)
-
-
-    #         avg_error_train += loss.item() / batch_num
-
-    #         self.optimizer.zero_grad()
-    #         loss.backward()
-    #         self.optimizer.step()
-        
-    #     self.scheduler.step()
-
-    #     print('avg error train in student mode : ', avg_error_train)
-    #     print('------------------------------------')
-
-
-    # def train_network(self, dataloader, epoch_num, writer, save_dir, save_step):
-    #     for param_tensor in self.state_dict():
-    #         self.state_dict()[param_tensor] = self.state_dict()[param_tensor].to(self.device)
-    #         self.state_dict()[param_tensor] = self.state_dict()[param_tensor].float()
-
-    #     self.optimizer = optim.AdamW(self.parameters(),
-    #                                  lr=INIT_LEARNING_RATE, weight_decay=INIT_WEIGHT_DECAY)
-    #     self.scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(self.optimizer, Te, Tmult)
-    #     self.criterion = nn.MSELoss()
-    #     self.train()
-
-    #     for name, param in self.named_parameters():
-    #         if param.requires_grad:
-    #             print(f"{name} requires grad")
-            
-    #     save_path = save_dir + "/model"+"_"+"0"+"epoch.pth"
-    #     torch.save(self, save_path)
-
-    #     for epoch in range(1, epoch_num+1):
-    #         self.epoch_process(epoch, dataloader,writer)
-    #         if (epoch > 0 and epoch % save_step == save_step - 1) or epoch == 1:
-    #             save_path = save_dir + "/model"+"_"+str(epoch)+"epoch.pth"
-    #             torch.save(self, save_path)
-
-    #     save_path = save_dir + "/model"+"_"+str(epoch_num)+"epoch.pth"
-    #     torch.save(self, save_path)
-        
-    #     writer.flush()
-    #     writer.close()
 
 
 class StyleEncoderGRU(nn.Module):
@@ -473,6 +409,13 @@ class ConvNorm1D(nn.Module):
         """ Forward function of Conv Norm 1D
             x = (B, L, in_channels)
         """
+        if x.dim() != 3:
+            raise RuntimeError(f"ConvNorm1D expected 3D input (B, L, C), got shape {tuple(x.shape)}")
+        if x.shape[-1] != self.conv.in_channels:
+            raise RuntimeError(
+                f"ConvNorm1D channel mismatch: got C={x.shape[-1]}, expected {self.conv.in_channels}; "
+                f"x shape={tuple(x.shape)}"
+            )
         x = x.transpose(1, 2)  # (B, in_channels, L)
         x = self.conv(x)  # (B, out_channels, L)
         x = x.transpose(1, 2)  # (B, L, out_channels)

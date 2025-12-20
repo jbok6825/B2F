@@ -25,16 +25,16 @@ class CustomDataset(Dataset):
         self.smpl_mode = smpl_mode
         if self.only_style == False:
             if self.same_mode == True:
-                self._same_feature_list = torch.tensor([])
+                self._same_feature_list = torch.tensor([], device=self.device)
             elif self.smpl_mode == True:
-                self._orientation_feature_list = torch.tensor([])
+                self._orientation_feature_list = torch.tensor([], device=self.device)
             else:
-                self._position_feature_list = torch.tensor([]) #(file_num, 180, 3)
-                self._velocity_feature_list = torch.tensor([])  #(file_num, 180, 3)
-                self._orientation_feature_list = torch.tensor([])
-        self._style_code_list = torch.tensor([])  #(file_num, )
-        self._face_expr_feature_list = torch.tensor([])  #(file_num, 180, 50)
-        self._jaw_feature_list = torch.tensor([])  #(file_num, 180, 3)
+                self._position_feature_list = torch.tensor([], device=self.device) #(file_num, 180, 3)
+                self._velocity_feature_list = torch.tensor([], device=self.device)  #(file_num, 180, 3)
+                self._orientation_feature_list = torch.tensor([], device=self.device)
+        self._style_code_list = torch.tensor([], device=self.device)  #(file_num, )
+        self._face_expr_feature_list = torch.tensor([], device=self.device)  #(file_num, 180, 50)
+        self._jaw_feature_list = torch.tensor([], device=self.device)  #(file_num, 180, 3)
 
         self._set_feature_list()
 
@@ -46,16 +46,16 @@ class CustomDataset(Dataset):
                 dataset = pickle.load(file)
                 if self.only_style == False:
                     if self.same_mode == True:
-                        self._same_feature_list = torch.cat((self._same_feature_list, dataset['same_feature']), dim = 0)
+                        self._same_feature_list = torch.cat((self._same_feature_list, dataset['same_feature'].to(self.device)), dim = 0)
                     elif self.smpl_mode == True:
-                        self._orientation_feature_list = torch.cat((self._orientation_feature_list, dataset['orientation']), dim = 0)
+                        self._orientation_feature_list = torch.cat((self._orientation_feature_list, dataset['orientation'].to(self.device)), dim = 0)
                     else:
-                        self._position_feature_list = torch.cat((self._position_feature_list, dataset['position']), dim = 0)
-                        self._orientation_feature_list = torch.cat((self._orientation_feature_list, dataset['orientation']), dim = 0)
-                        self._velocity_feature_list = torch.cat((self._velocity_feature_list, dataset['velocity']), dim = 0)
-                self._face_expr_feature_list = torch.cat((self._face_expr_feature_list, dataset['face_expr']), dim = 0)
-                self._jaw_feature_list = torch.cat((self._jaw_feature_list, dataset['jaw']), dim = 0)
-                self._style_code_list = torch.cat((self._style_code_list, dataset['style_code_list']), dim = 0)
+                        self._position_feature_list = torch.cat((self._position_feature_list, dataset['position'].to(self.device)), dim = 0)
+                        self._orientation_feature_list = torch.cat((self._orientation_feature_list, dataset['orientation'].to(self.device)), dim = 0)
+                        self._velocity_feature_list = torch.cat((self._velocity_feature_list, dataset['velocity'].to(self.device)), dim = 0)
+                self._face_expr_feature_list = torch.cat((self._face_expr_feature_list, dataset['face_expr'].to(self.device)), dim = 0)
+                self._jaw_feature_list = torch.cat((self._jaw_feature_list, dataset['jaw'].to(self.device)), dim = 0)
+                self._style_code_list = torch.cat((self._style_code_list, dataset['style_code_list'].to(self.device)), dim = 0)
 
 
 
@@ -75,20 +75,20 @@ class CustomDataset(Dataset):
                 facial_feature = torch.cat((jaw_feature, face_expr_feature), dim = -1)
                 facial_style_feature = torch.cat((jaw_style_feature, face_expr_style_feature), dim = -1)
                 formatted_data = {
-                                'facial_feature': facial_feature.to(DEVICE),
-                                'fullbody_feature': same_feature.to(DEVICE),
-                                'facial_style_feature':facial_style_feature.to(DEVICE),
-                                'style_code': style_code.to(DEVICE)}
+                                'facial_feature': facial_feature.to(self.device),
+                                'fullbody_feature': same_feature.to(self.device),
+                                'facial_style_feature':facial_style_feature.to(self.device),
+                                'style_code': style_code.to(self.device)}
             elif self.smpl_mode == True:
                 orientation_feature = self._orientation_feature_list[index]
             
                 facial_feature = torch.cat((jaw_feature, face_expr_feature), dim = -1)
                 facial_style_feature = torch.cat((jaw_style_feature, face_expr_style_feature), dim = -1)
                 formatted_data = {
-                                'facial_feature': facial_feature.to(DEVICE),
-                                'facial_style_feature':facial_style_feature.to(DEVICE),
-                                'style_code': style_code.to(DEVICE),
-                                'fullbody_feature' : orientation_feature.flatten(1).to(DEVICE)}
+                                'facial_feature': facial_feature.to(self.device),
+                                'facial_style_feature':facial_style_feature.to(self.device),
+                                'style_code': style_code.to(self.device),
+                                'fullbody_feature' : orientation_feature.flatten(1).to(self.device)}
                 
 
             else:
@@ -122,9 +122,9 @@ class CustomDataset(Dataset):
             
 
         else:
-            facial_style_feature = torch.cat((jaw_style_feature, face_expr_style_feature), dim = -1).to(DEVICE)
+            facial_style_feature = torch.cat((jaw_style_feature, face_expr_style_feature), dim = -1).to(self.device)
             formatted_data = {'facial_style_feature':facial_style_feature,
-                              'style_code': style_code.to(DEVICE)}
+                              'style_code': style_code.to(self.device)}
 
         return formatted_data
     
@@ -169,17 +169,17 @@ def collate_fn(batch):
 
 def collate_fn_same_timing(batch):
 
-    content_frame_length = random.randint(60, 90)
+    frame_length = random.randint(60, 90)
 
-    max_start_idx_content = 180- content_frame_length
+    max_start_idx_content = 180- frame_length
 
     for item in batch:
 
         start_idx_content = torch.randint(low = 0, high=max_start_idx_content+1, size=(1,)).item()
         if 'fullbody_feature' in item and 'facial_feature' in item:
-            item['fullbody_feature'] = item['fullbody_feature'][start_idx_content:start_idx_content+content_frame_length]
-            item['facial_feature'] = item['facial_feature'][start_idx_content:start_idx_content+content_frame_length]
-            item['facial_style_feature'] = item['facial_style_feature'][start_idx_content:start_idx_content+content_frame_length]
+            item['fullbody_feature'] = item['fullbody_feature'][start_idx_content:start_idx_content+frame_length]
+            item['facial_feature'] = item['facial_feature'][start_idx_content:start_idx_content+frame_length]
+            item['facial_style_feature'] = item['facial_style_feature'][start_idx_content:start_idx_content+frame_length]
             
 
     collated_batch = {key: torch.stack([item[key] for item in batch]) for key in batch[0]}
@@ -334,5 +334,4 @@ def collate_fn_new_fixed_content_in_style(batch):
 
 # if __name__ == "__main__":
 #     main()
-
 

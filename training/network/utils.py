@@ -517,7 +517,7 @@ def compute_KL_div(mu, logvar, iteration):
     # see Appendix B from VAE paper:
     # D.P. Kingma and M. Welling, "Auto-Encoding Variational Bayes", ICLR, 2014.
 
-    kl_weight_center = 5000         # 중심 시점을 훨씬 앞당김
+    kl_weight_center = 500        # 중심 시점을 훨씬 앞당김
     kl_weight_growth_rate = 0.0005    # 증가 속도도 높임
     kl_threshold = 0.05
 

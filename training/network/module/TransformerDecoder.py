@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch
-from training.network.Util import *
+from training.network.utils import *
 
 class TransformerDecoder(nn.Module):
     def __init__(self, 
