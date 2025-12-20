@@ -2,7 +2,7 @@
 # Model weights
 # ===============================
 Model/Model_Ours/*.pth
-!Model/Model_Ours/model_299epoch.pth
+!Model/Model_Ours/model_ours.pth
 
 # ===============================
 # Python cache
