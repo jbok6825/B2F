@@ -43,3 +43,5 @@ env/
 .vscode/
 .idea/
 .DS_Store
+*.blend
+inference/blenderViewer_*
