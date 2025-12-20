@@ -6,8 +6,8 @@ import torch.optim as optim
 from training.configs import *
 import numpy as np
 from training.configs import *
-from training.module.gating import Gating
-from training.module.generator import MotionGenerator
+from training.network_flame_to_arkit.module.gating import Gating
+from training.network_flame_to_arkit.module.generator import MotionGenerator
 
 
 class Network(nn.Module):

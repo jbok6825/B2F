@@ -6,7 +6,6 @@ import torch.nn.functional as F
 class Gating(nn.Module):
     """
     Mixture-of-experts gating network.
-    This mirrors the structure of the legacy FLAME→ARKit mapper checkpoints.
     """
 
     def __init__(self, device, input_dim, num_experts, rng=None):
@@ -14,7 +13,6 @@ class Gating(nn.Module):
         self.device = device
         self.input_dim = input_dim
         self.num_experts = num_experts
-        # Parameters are loaded from checkpoint; init shapes match stored tensors.
         self.w0 = nn.Parameter(torch.empty(input_dim, 128))
         self.w1 = nn.Parameter(torch.empty(128, 128))
         self.w2 = nn.Parameter(torch.empty(128, num_experts))

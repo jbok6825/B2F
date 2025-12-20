@@ -109,6 +109,7 @@ def main():
         )
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
+    print(arkit)
     np.savez(args.output, arkit=arkit, names=np.array(ARKIT_BLENDSHAPE))
     print(f"Saved ARKit blendshapes to {args.output} (shape {arkit.shape})")
 
