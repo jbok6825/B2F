@@ -7,7 +7,7 @@ from process_dataset.Constant import DEVICE, PATH_DB, PATH_MODEL
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
-from training.CustomDataset import CustomDataset, collate_fn_same_timing
+from training.CustomDataset_B2F import CustomDataset, collate_fn_same_timing
 from training.network_b2f.Network import Network
 
 

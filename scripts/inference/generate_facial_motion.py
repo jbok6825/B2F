@@ -14,7 +14,7 @@ from CharacterAnimationTools.util import quat
 
 from process_dataset.Constant import PATH_MODEL, DATASET_EXTRACT_JOINT_LIST, RUNTIME_EXTRACT_JOINT_LIST
 from process_dataset import utils
-from training.CustomDataset import CustomDataset
+from training.CustomDataset_B2F import CustomDataset
 from training.createTrainedB2FNetwork import create_expanded_network
 
 

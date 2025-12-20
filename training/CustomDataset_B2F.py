@@ -5,14 +5,13 @@ import os
 import process_dataset.utils as utils
 from process_dataset.Constant import *
 import random
-'''
-processd_data = {
-        'pose_body': motion_parms['pose_body'],
-        'pose_hand': motion_parms['pose_hand'],
-        'pose_jaw': motion_parms['pose_jaw'], 
-        'face_expr': motion_parms['face_expr'][:, :10]
-    }
-'''
+"""
+B2F training dataset loader (Motion-X processed pickles).
+This keeps a couple of legacy flags (`same_mode`, `smpl_mode`) for old experiments,
+but the current pipeline uses the default path: position/orientation/velocity +
+facial (jaw + expression). Prefer the defaults to avoid confusion.
+"""
+
 class CustomDataset(Dataset):
     # style dataset의 length는 120(4초)~180(6초)
     # motion dataset의 length는 180(6초)
@@ -334,4 +333,3 @@ def collate_fn_new_fixed_content_in_style(batch):
 
 # if __name__ == "__main__":
 #     main()
-

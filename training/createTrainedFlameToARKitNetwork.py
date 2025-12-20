@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
 from process_dataset.Constant import PATH_MODEL
-from training.CustomDataset import CustomDataset
+from training.CustomDataset_B2F import CustomDataset
 from training.network_flame_to_arkit.Network_MoE import Network
 
 def main():
