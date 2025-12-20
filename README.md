@@ -1,6 +1,6 @@
 # B2F: End-to-End Body-to-Face Motion Generation with Style Reference
 
-Official implementation of [B2F: End-to-End Body-to-Face Motion Generation with Style Reference](https://diglib.eg.org/items/93f81df9-1fa7-4ce4-b1f9-916c145d81e6). Generates facial motions from full-body motions (Motion-X); optional Blender scripts for visualization/retargeting. `CharacterAnimationTools` is vendored (lightly modified).
+Official implementation of [B2F: End-to-End Body-to-Face Motion Generation with Style Reference](https://diglib.eg.org/items/93f81df9-1fa7-4ce4-b1f9-916c145d81e6). Generates facial motions from full-body motions (Motion-X). `CharacterAnimationTools` is vendored (lightly modified). Blender visualization scripts are kept local (ignored via `.gitignore`) and are not part of this public guide.
 
 ## Repository Layout
 - `inference/`: Runtime controller, Blender viewer scripts, and helper utilities.
@@ -89,13 +89,8 @@ python scripts/inference/generate_facial_motion.py \
 # or use --body_bvh for a retargeted BVH with the required joints
 ```
 
-### Blender viewers (optional)
-Run inside Blender (Scripting tab → open file → Run Script):
-- `inference/blenderViewer_result_check.py`: loads Motion-X motion + generated facial motion.
-- `inference/blenderViewer_realTimeControl.py`: updates facial motion as the animation plays.
-- `inference/blenderViewer_result_arkit_converter_result.py`: FLAME→ARKit retargeting (set paths inside the script).
-
-Paths for dataset samples and checkpoints are defined in each script; adjust if your file layout differs.
+### Blender viewers (local only)
+Blender visualization/retargeting scripts are not shipped in the public repo and are ignored by `.gitignore`. If you maintain local copies under `inference/`, adjust any hard-coded paths to your dataset/checkpoints before running them inside Blender’s Python.
 
 ## CharacterAnimationTools
 This repository contains a copied and locally modified version of [CharacterAnimationTools](https://github.com/KosukeFukazawa/CharacterAnimationTools.git). Keep this folder when pushing/sharing, since the Blender viewers rely on its BVH utilities.
