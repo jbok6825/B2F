@@ -2,6 +2,7 @@
 # Model weights
 # ===============================
 Model/Model_Ours/*.pth
+Model/Model_Ours/*.pt
 !Model/Model_Ours/model_ours.pth
 !Model/Model_Ours/model_arkit.pt
 
@@ -20,7 +21,7 @@ runs/
 outputs/
 Models/
 
-*.pt
+
 *.npz
 *.npy
 *.pkl
