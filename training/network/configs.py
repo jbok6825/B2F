@@ -1,24 +1,3 @@
-NUM_EXPERTS = 8
-OFFSET_HIDDEN_SIZE = 64
-HIDDEN_SIZE_GT = 128
-HIDDEN_SIZE = 128
-# BATCH_SIZE = 256
-# EPOCHS = 150
+# Compatibility shim for legacy checkpoints that reference `training.network.configs`.
+from training.network_b2f.configs import *  # noqa: F401,F403
 
-# CHECK_STEP = 15
-
-KEEP_PROB = .3
-INIT_LEARNING_RATE = 0.0001
-INIT_WEIGHT_DECAY = 0.00005
-
-FINETUNED_LEARNING_RATE = 0.00005
-FINETUNED_WEIGHT_DECAY = 0.000001
-Te = 50
-Tmult = 2
-
-PAST_UNIT_NUM = 5
-FUTURE_UNIT_NUM = 10
-
-FPS = 30
-
-EPS = 1.0e-5

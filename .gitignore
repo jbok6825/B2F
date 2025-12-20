@@ -3,6 +3,7 @@
 # ===============================
 Model/Model_Ours/*.pth
 !Model/Model_Ours/model_ours.pth
+!Model/Model_Ours/model_arkit.pt
 
 # ===============================
 # Python cache

@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
 from training.CustomDataset import CustomDataset, collate_fn_same_timing
-from training.network.Network import Network
+from training.network_b2f.Network import Network
 
 
 def parse_args():
@@ -100,10 +100,10 @@ def create_expanded_network(
         vae_mode=True,
         positional_encoding=positional_encoding,
         content_vae_mode=content_vae_mode,
-    ).to(DEVICE)
+    ).to(device)
 
     if path_preTrainedModel is not None:
-        pretrained_model = torch.load(path_preTrainedModel)
+        pretrained_model = torch.load(path_preTrainedModel, map_location=device)
         network.load_state_dict(pretrained_model.state_dict())
 
     return network.to(device)

@@ -15,7 +15,7 @@ from CharacterAnimationTools.util import quat
 from process_dataset.Constant import PATH_MODEL, DATASET_EXTRACT_JOINT_LIST, RUNTIME_EXTRACT_JOINT_LIST
 from process_dataset import utils
 from training.CustomDataset import CustomDataset
-from training.createTrainedNetwork import create_expanded_network
+from training.createTrainedB2FNetwork import create_expanded_network
 
 
 def parse_args():
@@ -47,7 +47,7 @@ def parse_args():
     )
     parser.add_argument(
         "--model",
-        default=os.path.join(PATH_MODEL, "Model_Ours/model_299epoch.pth"),
+        default=os.path.join(PATH_MODEL, "Model_Ours/model_ours.pth"),
         help="Path to the trained Model_Ours checkpoint.",
     )
     parser.add_argument(
