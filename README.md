@@ -48,7 +48,7 @@ Blender ships its own Python; to add deps there, run Blender’s bundled Python:
 This project expects the Motion-X dataset. The dataset is **not** included in this repo.
 - Obtain Motion-X separately (respecting its license) and point `PATH_DB_ORIGIN` (and related paths) in `process_dataset/Constant.py` to your local dataset location. Replace any hard-coded sample paths in the Blender scripts with your own paths.
 - `PATH_MODEL` should point to the directory containing your checkpoints (`Model/` by default).
-- ARKit mapper (model_arkit): Trained on ARKit-based facial motion from the BEAT dataset [LZI22], converted to FLAME using the ARKit→FLAME matrix from [LZB24]. Training uses MSE between predicted and GT FLAME parameters with an extra weight (×500) on the `MouthClose` blendshape to emphasize mouth motion. These data/converters are not included; obtain them separately.
+- ARKit mapper (model_arkit): Trained on ARKit-based facial motion from the BEAT dataset [[LZI22]](https://pantomatrix.github.io/BEAT/), converted to FLAME using the ARKit→FLAME matrix from [[LZB24]](https://pantomatrix.github.io/EMAGE/). Training uses MSE between predicted and GT FLAME parameters with an extra weight (×500) on the `MouthClose` blendshape to emphasize mouth motion. These data/converters are not included; obtain them separately.
 
 ## Setup
 1) Clone this repository (including the included `CharacterAnimationTools` folder with local tweaks).
